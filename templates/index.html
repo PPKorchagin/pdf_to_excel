@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PDF → Excel</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <h2>pdf_to_excel</h2>
+        <div class="sub">Загрузите PDF (можно несколько) → Старт → Скачать Excel</div>
+      </div>
+      <div class="badge">Flask WebGUI</div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <input id="fileInput" type="file" accept="application/pdf" multiple />
+        <button id="btnUpload">Загрузить</button>
+        <button id="btnStart" class="primary" disabled>Старт</button>
+        <button id="btnDownload" class="primary" disabled>Скачать Excel</button>
+      </div>
+
+      <div id="fileList" class="pills"></div>
+      <div class="small">
+        Правила: строки с одинаковым <b>код</b> суммируются. В конце добавляются итоги по строкам/столбцам.
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Логи</h3>
+        <pre id="logBox"></pre>
+      </div>
+
+      <div class="card">
+        <h3>Статус</h3>
+        <div id="statusBox" class="small">Ожидание...</div>
+        <div class="small dim">
+          После скачивания Excel: логи очищаются, временные файлы удаляются.
+          При закрытии вкладки выполняется попытка завершить приложение (dev).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
