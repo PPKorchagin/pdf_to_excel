@@ -10,7 +10,7 @@ WebGUI (Flask) проект для обработки **одного или не
 - Нормализация данных:
   - `код` очищается от пробелов и `.0`
   - значения количества/сумм приводятся к числу (`"1 234,56"` → `1234.56`)
-- **Суммирование строк с одинаковым `код` внутри каждого PDF**.
+- **Суммирование строк с одинаковым `код` внутри каждого PDF файла**.
 - Объединение результатов нескольких PDF в одну таблицу по `код`.
 - Добавляются итоги:
   - `ИТОГО_СТРОКА` — сумма по строке по всем документным колонкам
@@ -33,17 +33,16 @@ WebGUI (Flask) проект для обработки **одного или не
 java -version
 ```
 
-Установка и запуск
+## Установка и запуск
 
 ```bash
 cd pdf_to_excel
 python -m venv .venv
 ```
-
-# Windows:
+Windows:
 `.venv\Scripts\activate`
 
-# Linux/Mac:
+Linux/Mac:
 `source .venv/bin/activate`
 
 ```python
@@ -52,3 +51,19 @@ python app.py
 ```
 Открыть в браузере:
 http://127.0.0.1:5000
+
+## Конвертация приложения в EXE (Windows, onefile)
+
+Для конвертации приложения в exe необходимо установить `jpype1` и `pyinstaller`, а так же положить **JRE JAVA** в папку `jre`.
+
+```bash
+pip install jpype1 pyinstaller
+```
+Положить portable JRE в папку проекта:
+```
+pdf_to_excel/jre/bin/java.exe
+```
+Выполнить команду сборки:
+```bash 
+pyinstaller --noconfirm --clean --name pdf_to_excel --onefile --add-data "templates;templates" --add-data "static;static" --add-data "jre;jre" --add-data "venv\Lib\site-packages\tabula\tabula-1.0.5-jar-with-dependencies.jar;tabula" app.py`
+```
