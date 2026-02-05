@@ -1,4 +1,4 @@
-import os
+import os, sys
 import threading
 import time
 from uuid import uuid4
@@ -6,7 +6,44 @@ from uuid import uuid4
 from flask import Flask, render_template, request, jsonify, send_file
 from werkzeug.utils import secure_filename
 
-from processor import process_pdfs, to_excel_bytes
+def resource_path(rel_path: str) -> str:
+    base = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base, rel_path)
+
+
+def setup_bundled_java() -> str | None:
+    """
+    Подкладываем portable JRE внутрь onefile и делаем её приоритетной для tabula-py.
+    Возвращаем путь к java.exe если нашли.
+    """
+    java_home = resource_path("jre")
+    java_exe = os.path.join(java_home, "bin", "java.exe")
+
+    if os.path.exists(java_exe):
+        os.environ["JAVA_HOME"] = java_home
+        os.environ["JAVACMD"] = java_exe
+        os.environ["JAVA"] = java_exe
+
+        # Важно: java из bundled jre/bin должна быть первой в PATH
+        os.environ["PATH"] = os.path.join(java_home, "bin") + os.pathsep + os.environ.get("PATH", "")
+        return java_exe
+
+    return None
+
+
+JAVA_EXE = setup_bundled_java()
+
+import tabula  # noqa: E402
+
+# Пытаемся задать java_path в tabula-py (в 2.10.0 обычно есть tabula.io._java_options)
+try:
+    if JAVA_EXE and hasattr(tabula, "io") and hasattr(tabula.io, "_java_options"):
+        tabula.io._java_options["java_path"] = JAVA_EXE
+except Exception:
+    pass
+
+from processor import process_pdfs, to_excel_bytes  # noqa: E402
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = os.path.join(BASE_DIR, "tmp_uploads")

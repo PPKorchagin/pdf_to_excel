@@ -3,9 +3,8 @@ import re
 from typing import Optional, List, Tuple, Callable
 
 import pandas as pd
-import tabula
 from PyPDF2 import PdfReader
-
+import tabula
 
 DOCNO_RE_1 = re.compile(r"Номер\s+документа.*?(\d{4,9})", re.IGNORECASE | re.DOTALL)
 DOCNO_RE_2 = re.compile(r"(\d{1,9})\s+\d{2}\.\d{2}\.\d{4}")
